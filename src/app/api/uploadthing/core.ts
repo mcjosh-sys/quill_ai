@@ -5,23 +5,39 @@ import {PDFLoader} from 'langchain/document_loaders/fs/pdf'
 import { OpenAIEmbeddings } from '@langchain/openai'
 import {PineconeStore} from '@langchain/community/vectorstores/pinecone'
 import { pinecone } from "@/lib/pinecone";
+import { getUserSubscriptionPlan } from "@/lib/stripe";
+import { PLANS } from "@/config/stripe";
  
 const f = createUploadthing();
- 
-export const ourFileRouter = { 
-  
-  pdfUploader: f({ pdf: { maxFileSize: "4MB" } })
-   
-    .middleware(async ({ req }) => {
+
+const middleware = async () => {
 
       const user = await getKindeServerSession().getUser()
+
+      const subscriptionPlan = await getUserSubscriptionPlan()
       
 
       if(!user || !user.id) throw new Error("Unauthorized")
       
-      return {userId: user?.id};
-    })
-    .onUploadComplete(async ({ metadata, file }) => { 
+      return {userId: user?.id, subscriptionPlan};
+}
+    
+const onUploadComplete = async ({ metadata, file }: {
+  metadata: Awaited<ReturnType<typeof middleware>>
+  file: {
+    key: string
+    name: string
+    url: string
+  }
+}) => { 
+
+  const isFileExists = await db.file.findFirst({
+    where: {
+      key: file.key
+    }
+  })
+  if (isFileExists) return 
+
       const createdFile = await db.file.create({
         data: {
           key: file.key,
@@ -39,6 +55,15 @@ export const ourFileRouter = {
         const pageLevelDocs = await loader.load()
 
         const pagesAmt = pageLevelDocs.length
+        const { subscriptionPlan } = metadata 
+        const { isSubscribed } = subscriptionPlan
+        
+        const isProExceeded = pagesAmt > PLANS.find(p => p.name === "Pro")!.pagesPerPdf
+        const isFreeExceeded = pagesAmt > PLANS.find(p => p.name === "Free")!.pagesPerPdf
+
+        if ((isSubscribed && isProExceeded) || (!isSubscribed && isFreeExceeded)) {
+          throw new Error("Page limit exceeded")
+        }
 
         // Vectorize and index the entire document
 
@@ -72,7 +97,16 @@ export const ourFileRouter = {
         })
         console.log({error})
       }
-    }),
+    }
+ 
+export const ourFileRouter = { 
+  
+  freePlanUploader: f({ pdf: { maxFileSize: "4MB" } })
+    .middleware(middleware)
+    .onUploadComplete(onUploadComplete),
+  proPlanUploader: f({ pdf: { maxFileSize: "16MB" } })
+    .middleware(middleware)
+    .onUploadComplete(onUploadComplete),
 } satisfies FileRouter;
  
 export type OurFileRouter = typeof ourFileRouter;

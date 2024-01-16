@@ -4,6 +4,7 @@ import { buttonVariants } from "./ui/button"
 import { LoginLink, RegisterLink, getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { ArrowRight } from "lucide-react"
 import UserAccountNav from '@/components/UserAccountNav'
+import MobileNav from "./MobileNav"
 
 const Navbar = async () => {
 
@@ -17,7 +18,7 @@ const Navbar = async () => {
                     <Link href='/' className="flex z-40 font-semibold">
                         <span>QuillAi.</span>
                     </Link>
-                    {/* Todo: add mobile navbar */}
+                    <MobileNav isAuth={!!user} />
 
                     <div className="hidden items-center space-center space-x-4 sm:flex">
                         {!user ? <>
