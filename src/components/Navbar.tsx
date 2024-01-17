@@ -5,10 +5,13 @@ import { LoginLink, RegisterLink, getKindeServerSession } from "@kinde-oss/kinde
 import { ArrowRight } from "lucide-react"
 import UserAccountNav from '@/components/UserAccountNav'
 import MobileNav from "./MobileNav"
+import { getUserSubscriptionPlan } from "@/lib/stripe"
 
 const Navbar = async () => {
 
     const user = await getKindeServerSession().getUser()
+
+    const { isSubscribed } = await getUserSubscriptionPlan()
 
 
     return (
@@ -18,7 +21,12 @@ const Navbar = async () => {
                     <Link href='/' className="flex z-40 font-semibold">
                         <span>QuillAi.</span>
                     </Link>
-                    <MobileNav isAuth={!!user} />
+                    <MobileNav isAuth={!!user} name={
+                        !user?.given_name || !user?.family_name ? "Your Account" : `${user?.given_name} ${user?.family_name}`
+                    }
+                        email={user?.email ?? ''}
+                        imageUrl={user?.picture ?? ''}
+                        isSubscribed={isSubscribed} />
 
                     <div className="hidden items-center space-center space-x-4 sm:flex">
                         {!user ? <>
@@ -45,6 +53,7 @@ const Navbar = async () => {
                             }
                                 email={user.email ?? ''}
                                 imageUrl={user.picture ?? ''}
+                                isSubscribed={isSubscribed}
                             />
                         </>}
                     </div>

@@ -2,12 +2,12 @@
 
 import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
-import { Loader2, MessageSquare } from "lucide-react";
-import Message from "./Message";
-import Skeleton from "react-loading-skeleton";
-import { useContext, useEffect, useRef, useState } from "react";
 import { chatContext } from "@/context/ChatContext";
-import {useIntersection} from '@mantine/hooks'
+import { useIntersection } from '@mantine/hooks';
+import { Loader2, MessageSquare } from "lucide-react";
+import { useContext, useEffect, useRef } from "react";
+import Skeleton from "react-loading-skeleton";
+import Message from "./Message";
 
 const Messages = ({ fileId }: { fileId: string }) => {
   const { isLoading: isAiThinking } = useContext(chatContext);
@@ -41,7 +41,6 @@ const Messages = ({ fileId }: { fileId: string }) => {
     ...(messages ?? []),
   ];
 
-  const lastMessageRef = useRef<HTMLDivElement>(null);
   const { ref, entry } = useIntersection({
     root: null,
     threshold: 1

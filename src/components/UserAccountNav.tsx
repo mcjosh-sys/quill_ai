@@ -1,22 +1,22 @@
-import { getUserSubscriptionPlan } from "@/lib/stripe"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuItem } from "./ui/dropdown-menu"
-import { Button } from "./ui/button"
-import { Avatar, AvatarFallback } from "./ui/avatar"
-import Image from "next/image"
-import { Icons } from "./Icons"
-import Link from "next/link"
-import { Gem } from "lucide-react"
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components"
+import { Gem } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { Icons } from "./Icons"
+import { Avatar, AvatarFallback } from "./ui/avatar"
+import { Button } from "./ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
 
 
 interface UserAccountNavProps {
     email: string | undefined
     name: string
     imageUrl: string
+    isSubscribed: boolean
 }
 
-const UserAccountNav = async ({ email, imageUrl, name }: UserAccountNavProps) => {
-    const subscriptionPlan = await getUserSubscriptionPlan()
+const UserAccountNav = async ({ email, imageUrl, name, isSubscribed }: UserAccountNavProps) => {
+    
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -47,7 +47,7 @@ const UserAccountNav = async ({ email, imageUrl, name }: UserAccountNavProps) =>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
-                    {subscriptionPlan?.isSubscribed ? (
+                    {isSubscribed ? (
                         <Link href='/dashboard/billing'>Manage Subscription</Link>
                     ) : (
                         <Link href='/pricing'>Upgrade <Gem className="text-blue-600 h-4 w-4 ml-1.5" /></Link>
