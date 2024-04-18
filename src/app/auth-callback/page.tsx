@@ -15,12 +15,12 @@ const Page = () => {
       }
     },
     onError: (err) => {
+      console.log(err.data?.code)
       if (err.data?.code === 'UNAUTHORIZED') {
         router.push("/sign-in")
       }
     },
-    retry: true,
-    retryDelay: 500,
+    retry: false
   })
   return (
     <div className='w-full mt-24 flex justify-center'>
