@@ -71,7 +71,7 @@ export const POST = async (req: NextRequest) => {
     stream: true,
     messages: [
       {
-        role: "system",
+        role: "assistant",
         content:
           "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
       },
