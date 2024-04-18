@@ -19,7 +19,7 @@ export default function Home() {
         <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
           QuillAi allows you to have conversations with any PDF document. Simply upload your file and start asking questions right away.
         </p>
-        <Link className={buttonVariants({ size: 'lg', className: 'mt-5' })} href="/sign-up" target="_blank">
+        <Link className={buttonVariants({ size: 'lg', className: 'mt-5' })} href="/sign-up">
           Get Started <ArrowRight className="ml-2 h-5 w-5" />
         </Link>
       </MaxWidthWrapper>

@@ -1,4 +1,3 @@
-import Dashboard from "@/components/Dashboard"
 import { db } from "@/db"
 import { getUserSubscriptionPlan } from "@/lib/stripe"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
@@ -19,7 +18,9 @@ const DashboardLayout = async ({children}:{children: React.ReactNode}) => {
 
     if (!dbUser) redirect('/auth-callback?origin=dashboard')
     return (
-        {children}
+        <>
+            {children}
+        </>
     )
 }
 

@@ -17,7 +17,7 @@ const Page = () => {
     onError: (err) => {
       console.log(err.data?.code)
       if (err.data?.code === 'UNAUTHORIZED') {
-        router.push("/sign-in")
+        origin === 'homepage' ? router.push("/sign-up") : router.push("/sign-in")
       }
     },
     retry: false
